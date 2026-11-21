@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Movements · StockWise{% endblock %}
+
+{% block content %}
+
+<style>
+.movement-page {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.movement-header {
+    margin-bottom: 30px;
+}
+
+.movement-header h1 {
+    font-size: 36px;
+    margin: 10px 0;
+}
+
+.movement-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.movement-card {
+    background: white;
+    border: 1px solid #e5eae5;
+    border-radius: 16px;
+    padding: 25px;
+}
+
+.movement-card h2 {
+    font-size: 19px;
+    margin-bottom: 22px;
+}
+
+.movement-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.movement-form label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #637066;
+}
+
+.movement-form input,
+.movement-form select,
+.movement-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e1e7e1;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 14px;
+    margin-top: 7px;
+    box-sizing: border-box;
+}
+
+.movement-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.movement-submit {
+    background: #30483a;
+    color: white;
+    padding: 13px;
+    border: none;
+    border-radius: 9px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.movement-table-wrapper {
+    overflow-x: auto;
+}
+
+.movement-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.movement-table th {
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #929b93;
+    padding: 15px 10px;
+    border-bottom: 1px solid #e8ece8;
+}
+
+.movement-table td {
+    padding: 16px 10px;
+    border-bottom: 1px solid #f0f2f0;
+    font-size: 14px;
+}
+
+.movement-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-in {
+    background: #eaf4ec;
+    color: #4d815a;
+}
+
+.badge-out {
+    background: #fff0ec;
+    color: #b45c48;
+}
+
+.empty-movements {
+    text-align: center;
+    padding: 60px 20px;
+    color: #89938a;
+}
+
+@media(max-width:900px) {
+    .movement-layout {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="page-container movement-page">
+
+    <section class="movement-header">
+
+        <div class="eyebrow">INVENTORY CONTROL</div>
+
+        <h1>Stock movements<span style="color:#819783">.</span></h1>
+
+        <p class="page-subtitle">
+            Track every stock addition and removal.
+        </p>
+
+    </section>
+
+    <div class="movement-layout">
+
+        <!-- ADD MOVEMENT -->
+
+        <div class="movement-card">
+
+            <h2>Record movement</h2>
+
+            <form method="POST" class="movement-form">
+
+                <div>
+                    <label>Product</label>
+
+                    <select name="product_id" required>
+
+                        <option value="">Select product</option>
+
+                        {% for product in products %}
+
+                        <option value="{{ product.id }}">
+                            {{ product.name }} — {{ product.quantity }} in stock
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div>
+                    <label>Movement type</label>
+
+                    <select name="movement_type" required>
+
+                        <option value="IN">Stock IN — Add inventory</option>
+
+                        <option value="OUT">Stock OUT — Remove inventory</option>
+
+                    </select>
+                </div>
+
+                <div>
+                    <label>Quantity</label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        min="1"
+                        required
+                        placeholder="Enter quantity">
+                </div>
+
+                <div>
+                    <label>Note (optional)</label>
+
+                    <textarea
+                        name="note"
+                        placeholder="Purchase, sale, damage, return, etc."></textarea>
+                </div>
+
+                <button type="submit" class="movement-submit">
+                    Record movement →
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- MOVEMENT HISTORY -->
+
+        <div class="movement-card">
+
+            <h2>Movement history</h2>
+
+            <div class="movement-table-wrapper">
+
+                <table class="movement-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>PRODUCT</th>
+                            <th>TYPE</th>
+                            <th>QUANTITY</th>
+                            <th>NOTE</th>
+                            <th>DATE</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for movement in movements %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ movement.product.name }}
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                {% if movement.movement_type == "IN" %}
+
+                                <span class="movement-badge badge-in">
+                                    Stock IN
+                                </span>
+
+                                {% else %}
+
+                                <span class="movement-badge badge-out">
+                                    Stock OUT
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {% if movement.movement_type == "IN" %}
+                                    +{{ movement.quantity }}
+                                    {% else %}
+                                    -{{ movement.quantity }}
+                                    {% endif %}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ movement.note or "—" }}
+                            </td>
+
+                            <td>
+                                {{ movement.created_at.strftime("%d %b %Y, %I:%M %p") }}
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-movements">
+                                    <h3>No movements yet</h3>
+                                    <p>
+                                        Your stock movement history will appear here.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

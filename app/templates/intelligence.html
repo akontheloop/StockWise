@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.intel-page {
+    padding: 40px;
+}
+
+.intel-header {
+    margin-bottom: 32px;
+}
+
+.intel-header h1 {
+    font-size: 44px;
+    font-weight: 750;
+    letter-spacing: -2px;
+    color: #202722;
+    margin: 12px 0;
+}
+
+.intel-header p {
+    color: #7c877f;
+}
+
+.intel-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.intel-card {
+    background: #fff;
+    border: 1px solid #e3e9e4;
+    border-radius: 18px;
+    padding: 25px;
+}
+
+.intel-label {
+    color: #87938a;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.intel-value {
+    font-size: 30px;
+    font-weight: 750;
+    margin-top: 15px;
+    color: #26322a;
+}
+
+.intel-sub {
+    color: #89938b;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.intel-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.intel-panel {
+    background: white;
+    border: 1px solid #e3e9e4;
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 22px;
+}
+
+.intel-panel h2 {
+    font-size: 22px;
+    margin-bottom: 25px;
+    color: #26322a;
+}
+
+.intel-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.intel-table th {
+    text-align: left;
+    font-size: 11px;
+    color: #8d9890;
+    letter-spacing: 1px;
+    padding: 13px 8px;
+    border-bottom: 1px solid #e5ebe6;
+}
+
+.intel-table td {
+    padding: 15px 8px;
+    border-bottom: 1px solid #edf1ed;
+    color: #455148;
+}
+
+.intel-bar {
+    height: 9px;
+    background: #edf2ed;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.intel-bar-fill {
+    height: 100%;
+    background: #526f5b;
+    border-radius: 20px;
+}
+
+.intel-alert {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    border-radius: 12px;
+    background: #f7f8f5;
+    margin-bottom: 12px;
+}
+
+.intel-alert.warning {
+    background: #fbf6e9;
+}
+
+.intel-alert.danger {
+    background: #fbefef;
+}
+
+.intel-alert strong {
+    color: #344137;
+}
+
+.intel-alert span {
+    color: #7f8981;
+}
+
+.intel-empty {
+    padding: 30px;
+    text-align: center;
+    color: #89938b;
+}
+
+@media(max-width:1100px) {
+    .intel-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .intel-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:650px) {
+    .intel-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="intel-page">
+
+    <div class="intel-header">
+
+        <div style="font-size:12px;letter-spacing:2px;color:#8b978e;font-weight:700;">
+            STOCKWISE INTELLIGENCE
+        </div>
+
+        <h1>Inventory intelligence<span style="color:#8ca58f;">.</span></h1>
+
+        <p>Understand your inventory value, stock health and business exposure.</p>
+
+    </div>
+
+    <!-- KPI CARDS -->
+
+    <div class="intel-grid">
+
+        <div class="intel-card">
+            <div class="intel-label">TOTAL PRODUCTS</div>
+            <div class="intel-value">{{ total_products }}</div>
+            <div class="intel-sub">Products in your inventory</div>
+        </div>
+
+        <div class="intel-card">
+            <div class="intel-label">TOTAL UNITS</div>
+            <div class="intel-value">{{ total_units }}</div>
+            <div class="intel-sub">Units currently available</div>
+        </div>
+
+        <div class="intel-card">
+            <div class="intel-label">INVENTORY COST VALUE</div>
+            <div class="intel-value">{{ business.currency }} {{ "{:,.2f}".format(inventory_cost) }}</div>
+            <div class="intel-sub">Value based on cost price</div>
+        </div>
+
+        <div class="intel-card">
+            <div class="intel-label">POTENTIAL PROFIT</div>
+            <div class="intel-value">{{ business.currency }} {{ "{:,.2f}".format(potential_profit) }}</div>
+            <div class="intel-sub">Potential margin on current stock</div>
+        </div>
+
+    </div>
+
+    <div class="intel-main-grid">
+
+        <!-- STOCK HEALTH -->
+
+        <div class="intel-panel">
+
+            <h2>Stock health</h2>
+
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span style="color:#77837a;">Healthy stock</span>
+                <strong>{{ stock_health }}%</strong>
+            </div>
+
+            <div class="intel-bar">
+                <div class="intel-bar-fill" style="width:{{ stock_health }}%;"></div>
+            </div>
+
+            <div style="margin-top:25px;">
+
+                <div class="intel-alert">
+                    <strong>Healthy inventory</strong>
+                    <span>{{ healthy_stock|length }} products</span>
+                </div>
+
+                <div class="intel-alert warning">
+                    <strong>Low stock</strong>
+                    <span>{{ low_stock|length }} products</span>
+                </div>
+
+                <div class="intel-alert danger">
+                    <strong>Out of stock</strong>
+                    <span>{{ out_of_stock|length }} products</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CATEGORY ANALYTICS -->
+
+        <div class="intel-panel">
+
+            <h2>Category analysis</h2>
+
+            {% if categories %}
+
+                {% for category, data in categories %}
+
+                    <div style="margin-bottom:23px;">
+
+                        <div style="display:flex;justify-content:space-between;">
+                            <strong>{{ category }}</strong>
+                            <span style="color:#89938b;">
+                                {{ business.currency }} {{ "{:,.2f}".format(data.value) }}
+                            </span>
+                        </div>
+
+                        <div style="color:#89938b;font-size:13px;margin-top:5px;">
+                            {{ data.products }} products · {{ data.units }} units
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="intel-empty">
+                    No category data available yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- TOP INVENTORY -->
+
+    <div class="intel-panel">
+
+        <h2>Highest inventory value</h2>
+
+        {% if top_products %}
+
+        <div style="overflow-x:auto;">
+
+            <table class="intel-table">
+
+                <thead>
+                    <tr>
+                        <th>PRODUCT</th>
+                        <th>CATEGORY</th>
+                        <th>QUANTITY</th>
+                        <th>COST / UNIT</th>
+                        <th>STOCK VALUE</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for product in top_products %}
+
+                    <tr>
+
+                        <td><strong>{{ product.name }}</strong></td>
+
+                        <td>{{ product.category or "—" }}</td>
+
+                        <td>{{ product.quantity }}</td>
+
+                        <td>
+                            {{ business.currency }}
+                            {{ "{:,.2f}".format(product.cost_price or 0) }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ business.currency }}
+                                {{ "{:,.2f}".format(product.quantity * (product.cost_price or 0)) }}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="intel-empty">
+            Add products to generate inventory intelligence.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- LOW STOCK PRODUCTS -->
+
+    <div class="intel-panel">
+
+        <h2>Reorder attention</h2>
+
+        {% if low_stock or out_of_stock %}
+
+        <div style="overflow-x:auto;">
+
+            <table class="intel-table">
+
+                <thead>
+                    <tr>
+                        <th>PRODUCT</th>
+                        <th>SKU</th>
+                        <th>AVAILABLE</th>
+                        <th>REORDER LEVEL</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for product in out_of_stock %}
+
+                    <tr>
+                        <td><strong>{{ product.name }}</strong></td>
+                        <td>{{ product.sku or "—" }}</td>
+                        <td>0</td>
+                        <td>{{ product.reorder_level }}</td>
+                        <td style="color:#b54c4c;font-weight:700;">OUT OF STOCK</td>
+                    </tr>
+
+                    {% endfor %}
+
+                    {% for product in low_stock %}
+
+                    <tr>
+                        <td><strong>{{ product.name }}</strong></td>
+                        <td>{{ product.sku or "—" }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.reorder_level }}</td>
+                        <td style="color:#b18b43;font-weight:700;">LOW STOCK</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="intel-empty">
+            All products are currently above their reorder thresholds.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

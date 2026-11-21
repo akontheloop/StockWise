@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.supplier-page {
+    padding: 40px;
+}
+
+.supplier-header {
+    margin-bottom: 30px;
+}
+
+.supplier-header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #202722;
+    margin-bottom: 10px;
+}
+
+.supplier-header p {
+    color: #7c877f;
+}
+
+.supplier-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 25px;
+}
+
+.supplier-card {
+    background: white;
+    border: 1px solid #e3e9e4;
+    border-radius: 20px;
+    padding: 28px;
+}
+
+.supplier-card h2 {
+    font-size: 23px;
+    margin-bottom: 25px;
+}
+
+.supplier-form label {
+    display: block;
+    margin: 18px 0 8px;
+    font-weight: 600;
+    color: #56645a;
+}
+
+.supplier-form input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #dce4dd;
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.supplier-btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 25px;
+    background: #304a3b;
+    color: white;
+    border: none;
+    border-radius: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.supplier-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.supplier-table th {
+    text-align: left;
+    padding: 16px 10px;
+    color: #929c94;
+    font-size: 12px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #e5ebe6;
+}
+
+.supplier-table td {
+    padding: 17px 10px;
+    border-bottom: 1px solid #edf1ed;
+    color: #354139;
+}
+
+.supplier-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.supplier-actions a {
+    color: #476b54;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.supplier-actions button {
+    color: #b14b4b;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.supplier-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #8b958d;
+}
+
+@media(max-width: 900px) {
+    .supplier-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="supplier-page">
+
+    <div class="supplier-header">
+        <div style="font-size:12px; letter-spacing:2px; color:#8b978e; font-weight:700;">
+            PROCUREMENT MANAGEMENT
+        </div>
+
+        <h1>Suppliers<span style="color:#8ca58f;">.</span></h1>
+        <p>Manage your supplier relationships and procurement operations.</p>
+    </div>
+
+    <div class="supplier-grid">
+
+        <!-- Add Supplier -->
+        <div class="supplier-card">
+            <h2>Add supplier</h2>
+
+            <form method="POST" class="supplier-form">
+
+                <label>Supplier name</label>
+                <input type="text" name="name" placeholder="Company or supplier name" required>
+
+                <label>Email</label>
+                <input type="email" name="email" placeholder="supplier@email.com">
+
+                <label>Phone</label>
+                <input type="text" name="phone" placeholder="+91 XXXXX XXXXX">
+
+                <label>Lead time (days)</label>
+                <input type="number" name="lead_time_days" value="7" min="0">
+
+                <button type="submit" class="supplier-btn">
+                    Add supplier →
+                </button>
+
+            </form>
+        </div>
+
+        <!-- Supplier List -->
+        <div class="supplier-card">
+            <h2>Supplier directory</h2>
+
+            {% if suppliers %}
+
+            <div style="overflow-x:auto;">
+                <table class="supplier-table">
+
+                    <thead>
+                        <tr>
+                            <th>SUPPLIER</th>
+                            <th>EMAIL</th>
+                            <th>PHONE</th>
+                            <th>LEAD TIME</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for supplier in suppliers %}
+                        <tr>
+                            <td><strong>{{ supplier.name }}</strong></td>
+                            <td>{{ supplier.email or "—" }}</td>
+                            <td>{{ supplier.phone or "—" }}</td>
+                            <td>{{ supplier.lead_time_days }} days</td>
+
+                            <td>
+                                <div class="supplier-actions">
+                                    <a href="{{ url_for('main.edit_supplier', supplier_id=supplier.id) }}">
+                                        Edit
+                                    </a>
+
+                                    <form method="POST"
+                                          action="{{ url_for('main.delete_supplier', supplier_id=supplier.id) }}"
+                                          onsubmit="return confirm('Delete this supplier?');">
+
+                                        <button type="submit">Delete</button>
+
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            {% else %}
+
+            <div class="supplier-empty">
+                <h3>No suppliers yet</h3>
+                <p>Add your first supplier using the form.</p>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

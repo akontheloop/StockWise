@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Business Setup · StockWise{% endblock %}
+
+{% block content %}
+
+<div class="setup-container">
+
+    <div class="setup-back">
+        <a href="/">← Back to dashboard</a>
+    </div>
+
+    <div class="setup-heading">
+        <div class="eyebrow">WORKSPACE CONFIGURATION</div>
+        <h1>Let's set up your business<span>.</span></h1>
+        <p>
+            StockWise adapts to how your business operates.
+            Configure your workspace in a few simple steps.
+        </p>
+    </div>
+
+    <div class="setup-card">
+
+        <div class="setup-card-header">
+            <div class="setup-step">01</div>
+            <div>
+                <h2>Business identity</h2>
+                <p>Tell us a little about your business.</p>
+            </div>
+        </div>
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label for="name">Business name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="e.g. Luphera, Urban Store"
+                    value="{{ business.name if business else '' }}"
+                    required
+                >
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="business_type">Business industry</label>
+
+                    <select id="business_type" name="business_type" required>
+                        <option value="retail">Retail & General Store</option>
+                        <option value="fashion">Fashion & Apparel</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="pharmacy">Pharmacy</option>
+                        <option value="grocery">Grocery & Food</option>
+                        <option value="warehouse">Warehouse & Distribution</option>
+                        <option value="beauty">Beauty & Cosmetics</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="currency">Business currency</label>
+
+                    <select id="currency" name="currency" required>
+                        <option value="INR">INR — Indian Rupee ₹</option>
+                        <option value="USD">USD — US Dollar $</option>
+                        <option value="EUR">EUR — Euro €</option>
+                        <option value="GBP">GBP — British Pound £</option>
+                        <option value="AED">AED — UAE Dirham</option>
+                        <option value="CAD">CAD — Canadian Dollar</option>
+                        <option value="AUD">AUD — Australian Dollar</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="setup-divider"></div>
+
+            <div class="setup-card-header">
+                <div class="setup-step">02</div>
+                <div>
+                    <h2>Inventory preferences</h2>
+                    <p>Customize how StockWise tracks your products.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="low_stock_threshold">
+                    Default low-stock threshold
+                </label>
+
+                <div class="input-description">
+                    Alert you when product stock falls below this quantity.
+                </div>
+
+                <input
+                    type="number"
+                    id="low_stock_threshold"
+                    name="low_stock_threshold"
+                    min="0"
+                    value="{{ business.low_stock_threshold if business else 10 }}"
+                    required
+                >
+            </div>
+
+            <div class="preference-options">
+
+                <label class="preference-option">
+                    <div class="preference-text">
+                        <strong>Expiry tracking</strong>
+                        <span>
+                            Track expiration dates for perishable
+                            or time-sensitive products.
+                        </span>
+                    </div>
+
+                    <input
+                        type="checkbox"
+                        name="expiry_tracking"
+                        {% if business and business.expiry_tracking %}
+                        checked
+                        {% endif %}
+                    >
+                </label>
+
+                <label class="preference-option">
+                    <div class="preference-text">
+                        <strong>Product variants</strong>
+                        <span>
+                            Track sizes, colors, specifications
+                            and variations.
+                        </span>
+                    </div>
+
+                    <input
+                        type="checkbox"
+                        name="variant_tracking"
+                        {% if business and business.variant_tracking %}
+                        checked
+                        {% endif %}
+                    >
+                </label>
+
+            </div>
+
+            <div class="setup-footer">
+                <p>Your configuration can be changed anytime.</p>
+                <button type="submit" class="button-primary setup-submit">
+                    Save workspace →
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="setup-note">
+        <span>✦</span>
+        Built for businesses that want clarity, not complexity.
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Import Inventory · StockWise{% endblock %}
+
+{% block content %}
+
+<div class="page-container">
+
+    <div style="margin-bottom:30px;">
+        <a href="/" style="text-decoration:none;color:#819783;">
+            ← Back to overview
+        </a>
+    </div>
+
+    <div class="page-header">
+        <h1>Import inventory<span style="color:#819783;">.</span></h1>
+        <p>Upload a CSV file to add products to your workspace.</p>
+    </div>
+
+    <div class="card" style="padding:32px;max-width:800px;">
+
+        <h2>Upload CSV file</h2>
+
+        <p style="color:#89948b;margin-bottom:24px;">
+            Your CSV should contain a product name and may include SKU,
+            category, description, price, cost price, quantity,
+            reorder level, variant and expiry date.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="file"
+                accept=".csv"
+                required
+                style="margin-bottom:24px;"
+            >
+
+            <button type="submit" class="button-primary">
+                Import products →
+            </button>
+
+        </form>
+
+        <hr style="margin:32px 0;">
+
+        <h3>CSV format</h3>
+
+        <p style="color:#89948b;">
+            Use these column headers:
+        </p>
+
+        <code style="display:block;padding:16px;background:#f5f7f5;border-radius:8px;overflow-x:auto;">
+            name,sku,category,description,price,cost_price,quantity,reorder_level,variant,expiry_date
+        </code>
+
+        <p style="margin-top:16px;color:#89948b;font-size:13px;">
+            Expiry date format: YYYY-MM-DD.
+            Existing SKUs will be skipped to prevent duplicates.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

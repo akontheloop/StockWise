@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.alerts-page {
+    padding: 40px;
+}
+
+.alerts-header {
+    margin-bottom: 32px;
+}
+
+.alerts-header h1 {
+    font-size: 44px;
+    font-weight: 750;
+    letter-spacing: -2px;
+    color: #202722;
+    margin: 12px 0;
+}
+
+.alerts-header p {
+    color: #7c877f;
+}
+
+.alert-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.alert-summary-card {
+    background: white;
+    border: 1px solid #e3e9e4;
+    border-radius: 18px;
+    padding: 25px;
+}
+
+.alert-label {
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: #89948c;
+}
+
+.alert-number {
+    font-size: 32px;
+    font-weight: 750;
+    margin-top: 14px;
+    color: #26322a;
+}
+
+.alert-panel {
+    background: white;
+    border: 1px solid #e3e9e4;
+    border-radius: 20px;
+    padding: 28px;
+}
+
+.alert-panel h2 {
+    font-size: 22px;
+    margin-bottom: 25px;
+}
+
+.alert-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+    border-radius: 15px;
+    border: 1px solid #e8ece8;
+    background: #fafbf9;
+}
+
+.alert-item.critical {
+    background: #fff7f6;
+    border-color: #f0d8d5;
+}
+
+.alert-item.warning {
+    background: #fffaf0;
+    border-color: #efe2c5;
+}
+
+.alert-info {
+    flex: 1;
+}
+
+.alert-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #344137;
+}
+
+.alert-description {
+    margin-top: 7px;
+    color: #7d887f;
+    font-size: 14px;
+}
+
+.alert-product {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #657269;
+}
+
+.alert-badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+
+.alert-badge.critical {
+    background: #f6e1df;
+    color: #a94d46;
+}
+
+.alert-badge.warning {
+    background: #f5ebd5;
+    color: #987638;
+}
+
+.alert-action {
+    text-align: right;
+    min-width: 140px;
+}
+
+.alert-action strong {
+    display: block;
+    color: #344137;
+    font-size: 14px;
+}
+
+.alert-action small {
+    color: #8b958d;
+}
+
+.alert-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: #8b958d;
+}
+
+.alert-empty h3 {
+    color: #52665a;
+}
+
+@media(max-width: 900px) {
+    .alert-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .alert-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .alert-action {
+        text-align: left;
+    }
+}
+</style>
+
+<div class="alerts-page">
+
+    <div class="alerts-header">
+
+        <div style="font-size:12px;letter-spacing:2px;color:#8b978e;font-weight:700;">
+            INVENTORY MONITORING
+        </div>
+
+        <h1>Alerts & attention<span style="color:#8ca58f;">.</span></h1>
+
+        <p>Identify inventory risks before they impact operations.</p>
+
+    </div>
+
+    <!-- SUMMARY -->
+
+    <div class="alert-summary">
+
+        <div class="alert-summary-card">
+            <div class="alert-label">TOTAL ALERTS</div>
+            <div class="alert-number">{{ total_alerts }}</div>
+            <div style="color:#89938b;margin-top:8px;font-size:13px;">
+                Items requiring attention
+            </div>
+        </div>
+
+        <div class="alert-summary-card">
+            <div class="alert-label">CRITICAL</div>
+            <div class="alert-number" style="color:#b4534c;">
+                {{ critical_count }}
+            </div>
+            <div style="color:#89938b;margin-top:8px;font-size:13px;">
+                Immediate action required
+            </div>
+        </div>
+
+        <div class="alert-summary-card">
+            <div class="alert-label">WARNINGS</div>
+            <div class="alert-number" style="color:#b18b43;">
+                {{ warning_count }}
+            </div>
+            <div style="color:#89938b;margin-top:8px;font-size:13px;">
+                Review and plan action
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ALERT LIST -->
+
+    <div class="alert-panel">
+
+        <h2>Active alerts</h2>
+
+        {% if alerts %}
+
+            {% for alert in alerts %}
+
+                <div class="alert-item {{ alert.severity }}">
+
+                    <div class="alert-info">
+
+                        <div class="alert-title">
+                            {{ alert.title }}
+                        </div>
+
+                        <div class="alert-description">
+                            {{ alert.message }}
+                        </div>
+
+                        <div class="alert-product">
+                            <strong>{{ alert.product.name }}</strong>
+
+                            {% if alert.product.sku %}
+                                · SKU: {{ alert.product.sku }}
+                            {% endif %}
+
+                            · Current stock: {{ alert.product.quantity }}
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <span class="alert-badge {{ alert.severity }}">
+                            {{ alert.severity|upper }}
+                        </span>
+                    </div>
+
+                    <div class="alert-action">
+
+                        {% if alert.recommended_quantity > 0 %}
+
+                            <strong>
+                                Reorder {{ alert.recommended_quantity }} units
+                            </strong>
+
+                            <small>Recommended stock adjustment</small>
+
+                        {% elif alert.type == "expired" or alert.type == "expiry" %}
+
+                            <strong>Review expiry</strong>
+
+                            <small>Inspect or remove affected stock</small>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="alert-empty">
+
+                <div style="font-size:40px;margin-bottom:15px;">✓</div>
+
+                <h3>All clear</h3>
+
+                <p>No inventory alerts require your attention.</p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+services:
+  stockwise:
+    build: .
+    container_name: stockwise
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+    volumes:
+      - stockwise_data:/app/instance
+
+volumes:
+  stockwise_data:

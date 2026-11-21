@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Search · StockWise{% endblock %}
+
+{% block content %}
+
+<div class="page-container">
+
+    <div class="page-header">
+        <h1>Search<span style="color:#819783;">.</span></h1>
+        <p>Search across your inventory and suppliers.</p>
+    </div>
+
+    <div class="card" style="padding:24px;margin-bottom:24px;">
+        <form action="/search" method="GET" style="display:flex;gap:12px;">
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search products, SKUs, categories or suppliers..."
+                style="flex:1;padding:12px;border:1px solid #e2e8e2;border-radius:8px;"
+                required
+            >
+
+            <button type="submit" class="button-primary">
+                Search →
+            </button>
+        </form>
+    </div>
+
+    {% if query %}
+
+        <h2 style="margin-bottom:20px;">
+            Results for "{{ query }}"
+        </h2>
+
+        <div class="card" style="padding:24px;margin-bottom:24px;">
+
+            <h3 style="margin-bottom:20px;">
+                Products ({{ products|length }})
+            </h3>
+
+            {% if products %}
+
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;">
+                        <thead>
+                            <tr style="text-align:left;border-bottom:1px solid #e5e9e5;">
+                                <th style="padding:12px;">Product</th>
+                                <th style="padding:12px;">SKU</th>
+                                <th style="padding:12px;">Category</th>
+                                <th style="padding:12px;">Stock</th>
+                                <th style="padding:12px;">Price</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for product in products %}
+                            <tr style="border-bottom:1px solid #f0f2f0;">
+                                <td style="padding:12px;">
+                                    <strong>{{ product.name }}</strong>
+                                </td>
+
+                                <td style="padding:12px;">
+                                    {{ product.sku or "—" }}
+                                </td>
+
+                                <td style="padding:12px;">
+                                    {{ product.category or "—" }}
+                                </td>
+
+                                <td style="padding:12px;">
+                                    {{ product.quantity }}
+                                </td>
+
+                                <td style="padding:12px;">
+                                    {{ business.currency }} {{ "%.2f"|format(product.price or 0) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            {% else %}
+
+                <p style="color:#89948b;">
+                    No matching products found.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        <div class="card" style="padding:24px;">
+
+            <h3 style="margin-bottom:20px;">
+                Suppliers ({{ suppliers|length }})
+            </h3>
+
+            {% if suppliers %}
+
+                {% for supplier in suppliers %}
+
+                    <div style="padding:16px 0;border-bottom:1px solid #f0f2f0;">
+                        <strong>{{ supplier.name }}</strong>
+
+                        {% if supplier.email %}
+                            <p style="color:#89948b;margin-top:6px;">
+                                {{ supplier.email }}
+                            </p>
+                        {% endif %}
+
+                        {% if supplier.phone %}
+                            <p style="color:#89948b;margin-top:4px;">
+                                {{ supplier.phone }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p style="color:#89948b;">
+                    No matching suppliers found.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

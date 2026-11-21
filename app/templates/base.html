@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StockWise{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">S
+    <main class="main-content"></div>
+            <div>
+                <div class="brand-name">stockwise</div>
+                <div class="brand-caption">INVENTORY INTELLIGENCE</div>
+            </div>
+        </div>
+
+<div class="nav-label">WORKSPACE</div>
+<nav>
+    <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">
+        <span class="nav-icon">◫</span>
+        Overview
+    </a>
+
+    <a href="/inventory" class="nav-item {% if request.path.startswith('/inventory') %}active{% endif %}">
+        <span class="nav-icon">▤</span>
+        Inventory
+    </a>
+
+    <a href="/movements" class="nav-item {% if request.path.startswith('/movements') %}active{% endif %}">
+        <span class="nav-icon">↗</span>
+        Stock movements
+    </a>
+
+    <a href="/suppliers" class="nav-item {% if request.path.startswith('/suppliers') %}active{% endif %}">
+        <span class="nav-icon">♧</span>
+        Suppliers
+    </a>
+
+    <a href="/intelligence" class="nav-item {% if request.path.startswith('/intelligence') %}active{% endif %}">
+        <span class="nav-icon">◷</span>
+        Intelligence
+    </a>
+
+    <a href="/alerts" class="nav-item {% if request.path.startswith('/alerts') %}active{% endif %}">
+        <span class="nav-icon">♧</span>
+        Alerts
+    </a>
+</nav>
+
+<div class="nav-label">PREFERENCES</div>
+<nav>
+    <a href="/settings" class="nav-item {% if request.path.startswith('/settings') %}active{% endif %}">
+        <span class="nav-icon">⚙</span>
+        Settings
+    </a>
+</nav>
+        <div class="sidebar-bottom">
+            <div class="upgrade-card">
+                <div class="upgrade-label">STOCKWISE INTELLIGENCE</div>
+                <p>Make smarter inventory decisions with real-time insights.</p>
+                <a href="#">Explore intelligence →</a>
+            </div>
+
+<div class="profile" id="profileDropdown">
+
+    <div class="profile-avatar">AK</div>
+
+    <div class="profile-info">
+        <strong>Workspace Owner</strong>
+        <span>Administrator</span>
+    </div>
+
+    <span class="profile-menu" onclick="toggleProfileMenu()">•••</span>
+
+    <div class="profile-dropdown" id="profileMenu">
+        <a href="/settings">⚙ Workspace Settings</a>
+        <a href="/alerts">♧ Alerts</a>
+        <a href="/inventory">▤ Inventory</a>
+    </div>
+
+</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="breadcrumb">
+                Workspace <span>/</span> Overview
+            </div>
+
+            <div class="topbar-right">
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    Systems operational
+                </div>
+                <form action="/search" method="GET" class="global-search">
+    <input type="text" name="q" placeholder="Search products, SKUs..." required>
+    <button type="submit" class="icon-button">⌕</button>
+</form>
+                <a href="/alerts" class="icon-button" style="text-decoration:none;">
+    ♧
+</a>
+            </div>
+        </header>
+
+        {% block content %}{% endblock %}
+
+    </main>
+</div>
+<script>
+function toggleProfileMenu() {
+    const menu = document.getElementById("profileMenu");
+    menu.classList.toggle("show");
+}
+
+document.addEventListener("click", function(event) {
+    const profile = document.getElementById("profileDropdown");
+    const menu = document.getElementById("profileMenu");
+
+    if (profile && !profile.contains(event.target)) {
+        menu.classList.remove("show");
+    }
+});
+</script>
+</body>
+</html>

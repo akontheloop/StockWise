@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Product · StockWise{% endblock %}
+
+{% block content %}
+
+<style>
+.edit-product-container {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.edit-product-header {
+    margin-bottom: 30px;
+}
+
+.edit-product-header h1 {
+    font-size: 36px;
+    margin: 10px 0;
+}
+
+.edit-product-card {
+    background: white;
+    border: 1px solid #e5eae5;
+    border-radius: 16px;
+    padding: 30px;
+}
+
+.edit-product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.edit-product-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.edit-product-field.full {
+    grid-column: 1 / -1;
+}
+
+.edit-product-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #59665d;
+}
+
+.edit-product-field input,
+.edit-product-field textarea {
+    padding: 12px;
+    border: 1px solid #e0e6e0;
+    border-radius: 9px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.edit-product-field textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.edit-product-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.edit-product-btn {
+    padding: 12px 20px;
+    border-radius: 9px;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.edit-save {
+    background: #30483a;
+    color: white;
+}
+
+.edit-cancel {
+    background: #f0f3f0;
+    color: #526257;
+}
+
+@media(max-width:600px) {
+    .edit-product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-product-field.full {
+        grid-column: auto;
+    }
+}
+</style>
+
+<div class="page-container edit-product-container">
+
+    <section class="edit-product-header">
+        <div class="eyebrow">PRODUCT MANAGEMENT</div>
+        <h1>Edit product<span style="color:#819783">.</span></h1>
+        <p style="color:#849087">
+            Update product information and inventory details.
+        </p>
+    </section>
+
+    <div class="edit-product-card">
+
+        <form method="POST">
+
+            <div class="edit-product-grid">
+
+                <div class="edit-product-field">
+                    <label>Product name *</label>
+                    <input type="text"
+                           name="name"
+                           value="{{ product.name }}"
+                           required>
+                </div>
+
+                <div class="edit-product-field">
+                    <label>SKU</label>
+                    <input type="text"
+                           name="sku"
+                           value="{{ product.sku or '' }}">
+                </div>
+
+                <div class="edit-product-field">
+                    <label>Category</label>
+                    <input type="text"
+                           name="category"
+                           value="{{ product.category or '' }}">
+                </div>
+
+                <div class="edit-product-field">
+                    <label>Variant</label>
+                    <input type="text"
+                           name="variant"
+                           value="{{ product.variant or '' }}">
+                </div>
+
+                <div class="edit-product-field">
+                    <label>Sale price</label>
+                    <input type="number"
+                           step="0.01"
+                           name="price"
+                           value="{{ product.price or 0 }}">
+                </div>
+
+                <div class="edit-product-field">
+                    <label>Cost price</label>
+                    <input type="number"
+                           step="0.01"
+                           name="cost_price"
+                           value="{{ product.cost_price or 0 }}">
+                </div>
+
+                <div class="edit-product-field">
+                    <label>Current stock</label>
+                    <input type="number"
+                           name="quantity"
+                           min="0"
+                           value="{{ product.quantity }}">
+                </div>
+
+                <div class="edit-product-field">
+                    <label>Reorder level</label>
+                    <input type="number"
+                           name="reorder_level"
+                           min="0"
+                           value="{{ product.reorder_level }}">
+                </div>
+
+                <div class="edit-product-field full">
+                    <label>Description</label>
+                    <textarea name="description">{{ product.description or '' }}</textarea>
+                </div>
+
+            </div>
+
+            <div class="edit-product-actions">
+
+                <button type="submit" class="edit-product-btn edit-save">
+                    Save changes
+                </button>
+
+                <a href="{{ url_for('main.inventory') }}"
+                   class="edit-product-btn edit-cancel">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

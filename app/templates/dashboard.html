@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Overview · StockWise{% endblock %}
+
+{% block content %}
+
+<div class="page-container">
+
+    <section class="page-header">
+        <div>
+            <div class="eyebrow">YOUR BUSINESS AT A GLANCE</div>
+            <h1>Overview<span class="heading-period">.</span></h1>
+            <p class="page-subtitle">
+                A clear picture of your inventory. Better decisions, fewer surprises.
+            </p>
+        </div>
+
+        <div class="header-actions">
+            <button class="button-secondary">↻ Refresh</button>
+<a href="{{ url_for('main.add_product') }}" class="button-primary" style="text-decoration: none;">+ Add product</a>        </div>
+    </section>
+
+    <section class="metrics-grid">
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Total products</span>
+                <span class="metric-icon">▤</span>
+            </div>
+            <div class="metric-value">{{ total_products }}</div>
+            <div class="metric-footnote">Products tracked in your workspace</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Units in stock</span>
+                <span class="metric-icon">▦</span>
+            </div>
+            <div class="metric-value">{{ total_stock }}</div>
+            <div class="metric-footnote">Total inventory quantity</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Inventory value</span>
+                <span class="metric-icon">₹</span>
+            </div>
+            <div class="metric-value">₹{{ "{:,.0f}".format(inventory_value) }}</div>
+            <div class="metric-footnote">Based on recorded cost prices</div>
+        </div>
+
+        <div class="metric-card alert-metric">
+            <div class="metric-top">
+                <span class="metric-label">Stock attention</span>
+                <span class="metric-icon alert-icon">!</span>
+            </div>
+            <div class="metric-value">{{ low_stock|length }}</div>
+            <div class="metric-footnote">
+                {{ out_of_stock|length }} products currently out of stock
+            </div>
+        </div>
+
+    </section>
+
+    <section class="content-grid">
+
+        <div class="panel inventory-panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Inventory overview</h2>
+                    <p>Current product stock levels</p>
+                </div>
+                <a class="text-link" href="#">View inventory →</a>
+            </div>
+
+            {% if products %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PRODUCT</th>
+                            <th>SKU</th>
+                            <th>STOCK</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products[:8] %}
+                        <tr>
+                            <td>
+                                <div class="product-cell">
+                                    <div class="product-placeholder">
+                                        {{ product.name[:1].upper() }}
+                                    </div>
+                                    <div>
+                                        <strong>{{ product.name }}</strong>
+                                        <span>{{ product.category or "Uncategorized" }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="sku">{{ product.sku or "—" }}</td>
+                            <td>
+                                <strong>{{ product.quantity }}</strong>
+                            </td>
+                            <td>
+                                {% if product.quantity == 0 %}
+                                    <span class="badge danger">Out of stock</span>
+                                {% elif product.quantity <= product.reorder_level %}
+                                    <span class="badge warning">Low stock</span>
+                                {% else %}
+                                    <span class="badge success">Healthy</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">▤</div>
+                <h3>Your inventory starts here</h3>
+                <p>
+                    Add products or import your existing catalog to see
+                    real inventory insights.
+                </p>
+<a href="{{ url_for('main.add_product') }}" class="button-primary" style="text-decoration: none;">+ Add your first product</a>            </div>
+            {% endif %}
+        </div>
+
+        <div class="panel insights-panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Inventory intelligence</h2>
+                    <p>Actionable insights from your data</p>
+                </div>
+                <span class="insight-symbol">✦</span>
+            </div>
+
+            {% if low_stock %}
+                <div class="insight-list">
+                    {% for product in low_stock[:5] %}
+                    <div class="insight-item">
+                        <div class="insight-indicator warning-indicator"></div>
+                        <div class="insight-content">
+                            <strong>{{ product.name }}</strong>
+                            <p>
+                                {% if product.quantity == 0 %}
+                                This product is out of stock.
+                                {% else %}
+                                Stock is below your reorder threshold.
+                                {% endif %}
+                            </p>
+                            <span class="insight-meta">
+                                {{ product.quantity }} units remaining
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="insight-empty">
+                    <div class="insight-check">✓</div>
+                    <strong>No stock alerts</strong>
+                    <p>
+                        Add inventory data to begin receiving
+                        stock-level insights.
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="insight-footer">
+                <span>Insights are calculated from your recorded inventory.</span>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="bottom-banner">
+        <div class="banner-content">
+            <div class="banner-mark">✦</div>
+            <div>
+                <h3>Inventory clarity, built around your business.</h3>
+                <p>
+                    Import real product data to unlock stock intelligence,
+                    reorder recommendations and demand insights.
+                </p>
+            </div>
+        </div>
+<a href="{{ url_for('main.import_inventory') }}"
+   class="button-secondary"
+   style="text-decoration:none;">
+    Import inventory →
+</a>
+    </section>
+
+</div>
+
+{% endblock %}
